@@ -1,13 +1,13 @@
 class ProxyPath{
-    static getInstance():any{
+    static getInstance(cb:(subNameCallArray:Array<string>)=>any):any{
         let functions = {
             get(target:any, key:any):any{
-                    target().subName.push(key);
+                target().subName.push(key);
                 return new Proxy(target, functions);
             },
             apply(target:any, key:any, args:any){
-                    args.unshift("args");
-                return target().subName.concat(args);
+                args.unshift("args");
+                return cb(target().subName.concat(args)); //whatever cb is returning will be send back
             }
         };
         let save = new ProxyPath.Save([]);
@@ -23,4 +23,4 @@ class ProxyPath{
       }
     }
 }
-console.log(ProxyPath.getInstance().test.done.wow('var'));
+console.log(ProxyPath.getInstance((subNameCallArray)=>{return subNameCallArray}).test.done.wow('var'));
